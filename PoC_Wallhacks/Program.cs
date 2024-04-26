@@ -1,10 +1,13 @@
 ﻿using PoC_Wallhacks;
 using Swed64;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 Swed swed = new Swed("cs2");
 
 IntPtr client = swed.GetModuleBase("client.dll");
+IntPtr forceJumpAddress = client + 0x1733750;
+IntPtr forceAttack = client + 0x1733240;
 
 Renderer renderer = new Renderer();
 Thread renderThread = new Thread(new ThreadStart(renderer.Start().Wait));
@@ -14,6 +17,16 @@ Vector2 screenSize = renderer.screenSize;
 
 List<Entity> entities = new List<Entity>();
 Entity localPlayer = new Entity();
+
+
+[DllImport("user32.dll")]
+static extern short GetAsyncKeyState(int vKey);
+const int SPACE_BAR = 0X20;
+const uint STANDING = 65665;
+const uint CROUCHING = 65667;
+
+const uint PLUS_JUMP = 65537;
+const uint MINUS_JUMP = 256;
 
 //offsets.cs
 int dwEntityList = 0x18C6268;
@@ -73,5 +86,22 @@ while (true)
     }
     renderer.UpdateLocalPlayer(localPlayer);
     renderer.UpdateEntities(entities);
+
+    uint fFlag = swed.ReadUInt(localPlayerPawn, 0x3D4);
+
+    int entIndex = swed.ReadInt(localPlayerPawn, Offsets.m_iIDEntIndex);
+
+    if (GetAsyncKeyState(0x12) < 0)
+    {
+        if (entIndex > 0)
+        {
+            swed.WriteInt(forceAttack, 65537);
+            Thread.Sleep(1);
+            swed.WriteInt(forceAttack, 256);
+        }
+    }
+    Thread.Sleep(1);
+
+
 
 }
