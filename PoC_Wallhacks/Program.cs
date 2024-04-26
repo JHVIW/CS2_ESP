@@ -28,38 +28,24 @@ const uint CROUCHING = 65667;
 const uint PLUS_JUMP = 65537;
 const uint MINUS_JUMP = 256;
 
-//offsets.cs
-int dwEntityList = 0x18C6268;
-int dwViewMatrix = 0x19278B0;
-int dwLocalPlayerPawn = 0x173A3C8;
-
-//client.dll.cs
-int m_vOldOrigin = 0x127C;
-int m_iTeamNum = 0x3CB;
-int m_vecViewOffset = 0xC58;
-
-//client.dll.hpp
-int m_lifeState = 0x338;
-int m_hPlayerPawn = 0x7E4;
-
 
 while (true)
 {
     entities.Clear();
-    IntPtr entityList = swed.ReadPointer(client, dwEntityList);
+    IntPtr entityList = swed.ReadPointer(client, Offsets.dwEntityList);
 
     IntPtr listEntry = swed.ReadPointer(entityList, 0x10);
 
-    IntPtr localPlayerPawn = swed.ReadPointer(client, dwLocalPlayerPawn);
+    IntPtr localPlayerPawn = swed.ReadPointer(client, Offsets.dwLocalPlayerPawn);
 
-    localPlayer.team = swed.ReadInt(localPlayerPawn, m_iTeamNum);
+    localPlayer.team = swed.ReadInt(localPlayerPawn, Offsets.m_iTeamNum);
 
     for(int i = 0; i< 64; i++)
     {
         IntPtr currentController = swed.ReadPointer(listEntry, i * 0x78);
         if (currentController == IntPtr.Zero) continue;
 
-        int pawnHandle = swed.ReadInt(currentController, m_hPlayerPawn);
+        int pawnHandle = swed.ReadInt(currentController, Offsets.m_hPlayerPawn);
         if(pawnHandle == 0) continue;
 
         IntPtr listEntry2 = swed.ReadPointer(entityList, 0x8 * ((pawnHandle & 0x7FFF) >> 9) + 0x10);
@@ -68,16 +54,16 @@ while (true)
         IntPtr currentPawn = swed.ReadPointer(listEntry2, 0x78 * (pawnHandle & 0x1FF));
         if (currentPawn == IntPtr.Zero) continue;
 
-        int lifeState = swed.ReadInt(currentPawn, m_lifeState);
+        int lifeState = swed.ReadInt(currentPawn, Offsets.m_lifeState);
         if (lifeState != 256) continue;
 
-        float[] viewMatrix = swed.ReadMatrix(client + dwViewMatrix);
+        float[] viewMatrix = swed.ReadMatrix(client + Offsets.dwViewMatrix);
 
         Entity entity = new Entity();
 
-        entity.team = swed.ReadInt(currentPawn, m_iTeamNum);
-        entity.position = swed.ReadVec(currentPawn, m_vOldOrigin);
-        entity.viewOffset = swed.ReadVec(currentPawn, m_vecViewOffset);
+        entity.team = swed.ReadInt(currentPawn, Offsets.m_iTeamNum);
+        entity.position = swed.ReadVec(currentPawn, Offsets.m_vOldOrigin);
+        entity.viewOffset = swed.ReadVec(currentPawn, Offsets.m_vecViewOffset);
         entity.position2D = Calculate.WorldToScreen(viewMatrix, entity.position, screenSize);
         entity.viewPosition2D = Calculate.WorldToScreen(viewMatrix, Vector3.Add(entity.position, entity.viewOffset), screenSize);
 
