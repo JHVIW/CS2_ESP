@@ -15,15 +15,20 @@ Vector2 screenSize = renderer.screenSize;
 List<Entity> entities = new List<Entity>();
 Entity localPlayer = new Entity();
 
-int dwEntityList = 0x18C1EA8;
-int dwViewMatrix = 0x1923180;
-int dwLocalPlayerPawn = 0x17361C8;
+//offsets.cs
+int dwEntityList = 0x18C6268;
+int dwViewMatrix = 0x19278B0;
+int dwLocalPlayerPawn = 0x173A3C8;
 
+//client.dll.cs
 int m_vOldOrigin = 0x127C;
 int m_iTeamNum = 0x3CB;
+int m_vecViewOffset = 0xC58;
+
+//client.dll.hpp
 int m_lifeState = 0x338;
 int m_hPlayerPawn = 0x7E4;
-int m_vecViewOffset = 0xC58;
+
 
 while (true)
 {
