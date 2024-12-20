@@ -19,7 +19,4 @@
 - **Offset Updates**: The tool may require updates to offsets following game patches.
 - **Compatibility**: Designed for use with Counter-Strike 2 on Windows systems.
 
-## License
-
-
 *Disclaimer: Usage of this tool may violate the terms of service of Counter-Strike 2. Proceed at your own risk.*
